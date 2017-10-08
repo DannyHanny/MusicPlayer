@@ -48,11 +48,11 @@ public class Main extends Application {
         Slider slider = new Slider();
         slider.setMin(0);
         slider.setMax(100);
-        slider.setValue(50);
+        slider.setValue(0);
 
         ProgressBar progressBar = new ProgressBar();
-        progressBar.setPrefSize(400, 30);
-        progressBar.setProgress(0.5);
+        progressBar.setPrefSize(1000, 30);
+        progressBar.setProgress(0);
 
         slider.valueProperty().addListener(
                 (observable, old_value, new_value) -> progressBar.setProgress(new_value.doubleValue() / 100)
@@ -60,61 +60,48 @@ public class Main extends Application {
 
         root.getChildren().addAll(slider, progressBar);
 
-        TableView table = new TableView<>();
-        table.setPrefSize(200, 100);
-        table.setItems(tracks);
+        TableView playlistTable = new TableView<>();
+        playlistTable.setPrefSize(200, 100);
+        playlistTable.setItems(playlists);
 
-        TableColumn firstNameColumn = new TableColumn<>("Track Title");
-        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("trackTitle"));
-        table.getColumns().add(firstNameColumn);
+        TableColumn playlistColumn = new TableColumn<>("Playlist Name");
+        playlistColumn.setCellValueFactory(new PropertyValueFactory<>("playlistName"));
+        playlistTable.getColumns().add(playlistColumn);
 
-        TableColumn lastNameColumn = new TableColumn<>("Album");
-        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("album"));
-        table.getColumns().add(lastNameColumn);
+        TableColumn durationColumn = new TableColumn<>("Duration");
+        durationColumn.setCellValueFactory(new PropertyValueFactory<>("playlistDuration"));
+        playlistTable.getColumns().add(durationColumn);
 
-        TableColumn emailColumn = new TableColumn<>("Artist");
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
-        table.getColumns().add(emailColumn);
+        root.getChildren().add(playlistTable);
 
-        root.getChildren().add(table);
+        TableView tracksTable = new TableView<>();
+        tracksTable.setPrefSize(200, 100);
+        tracksTable.setItems(tracks);
 
-        VBox boxOfButtons = new VBox(10);
+        TableColumn trackColumn = new TableColumn<>("Track Title");
+        trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackTitle"));
+        tracksTable.getColumns().add(trackColumn);
 
-        Button[] myButtons = new Button[5];
+        TableColumn albumColumn = new TableColumn<>("Album");
+        albumColumn.setCellValueFactory(new PropertyValueFactory<>("album"));
+        tracksTable.getColumns().add(albumColumn);
 
-        myButtons[0] = new Button("Button number one");
-        myButtons[0].setPrefSize(200, 50);
-        myButtons[0].setOnAction((ActionEvent ae) -> doSomething());
+        TableColumn artistColumn = new TableColumn<>("Artist");
+        artistColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
+        tracksTable.getColumns().add(artistColumn);
 
-        myButtons[1] = new Button("Button number two");
-        myButtons[1].setPrefSize(200, 50);
-        myButtons[1].setOnAction((ActionEvent ae) -> doSomething());
-
-        myButtons[2] = new Button("Button number three");
-        myButtons[2].setPrefSize(200, 50);
-        myButtons[2].setOnAction((ActionEvent ae) -> doSomething());
-
-        myButtons[3] = new Button("Button number four");
-        myButtons[3].setPrefSize(200, 50);
-        myButtons[3].setOnAction((ActionEvent ae) -> doSomething());
-
-        myButtons[4] = new Button("Button number five");
-        myButtons[4].setPrefSize(200, 50);
-        myButtons[4].setOnAction((ActionEvent ae) -> doSomething());
-
-        boxOfButtons.getChildren().addAll(myButtons);
-
-        root.getChildren().add(boxOfButtons);
-
+        root.getChildren().add(tracksTable);
 
     }
 
     ObservableList<Track> tracks = FXCollections.observableArrayList(
             new Track("Losing My Edge", "LCD Soundsystem", "LCD Soundsystem"),
-            new Track("Isabella", "Johnson", ""),
-            new Track("Ethan", "Williams", ""),
-            new Track("Emma", "Jones", ""),
-            new Track("Michael", "Brown", "")
+            new Track("Dum Surfer", "Dum Surfer", "King Krule")
+    );
+
+    ObservableList<Playlist> playlists = FXCollections.observableArrayList(
+            new Playlist("Playlist 1", "12:05"),
+            new Playlist("Playlist 2","2:08")
     );
 
     private void doSomething() {
