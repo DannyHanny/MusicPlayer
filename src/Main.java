@@ -3,13 +3,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+
+    public static GraphicsContext gc;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -24,17 +29,19 @@ public class Main extends Application {
 
         MenuBar myMenu = new MenuBar();
 
-        Menu numbersMenu = new Menu("File");
-        MenuItem numbersItem1 = new MenuItem("One");
-        MenuItem numbersItem2 = new MenuItem("Two");
-        MenuItem numbersItem3 = new MenuItem("Three");
-        numbersMenu.getItems().addAll(numbersItem1, numbersItem2, numbersItem3);
+        Menu fileMenu = new Menu("File");
+        MenuItem fileItem1 = new MenuItem("Open...");
+        MenuItem fileItem2 = new MenuItem("Add folder...");
+        MenuItem fileItem3 = new MenuItem("New Playlist...");
+        MenuItem fileItem4 = new MenuItem("Settings");
+        MenuItem fileItem5 = new MenuItem("Exit");
+        fileMenu.getItems().addAll(fileItem1, fileItem2, fileItem3, fileItem4, fileItem5);
 
-        Menu coloursMenu = new Menu("Edit");
-        MenuItem coloursItem1 = new MenuItem("Red");
-        MenuItem coloursItem2 = new MenuItem("Green");
-        MenuItem coloursItem3 = new MenuItem("Blue");
-        coloursMenu.getItems().addAll(coloursItem1, coloursItem2, coloursItem3);
+        Menu editMenu = new Menu("Edit");
+        MenuItem editItem1 = new MenuItem("Undo");
+        MenuItem editItem2 = new MenuItem("Redo");
+        MenuItem editItem3 = new MenuItem("Select all");
+        editMenu.getItems().addAll(editItem1, editItem2, editItem3);
 
         Menu shapesMenu = new Menu("View");
         MenuItem shapesItem1 = new MenuItem("Triangle");
@@ -42,7 +49,11 @@ public class Main extends Application {
         MenuItem shapesItem3 = new MenuItem("Circle");
         shapesMenu.getItems().addAll(shapesItem1, shapesItem2, shapesItem3);
 
-        myMenu.getMenus().addAll(numbersMenu, coloursMenu, shapesMenu);
+        Menu helpMenu = new Menu("Help");
+        MenuItem helpItem1 = new MenuItem("About");
+        helpMenu.getItems().addAll(helpItem1);
+
+        myMenu.getMenus().addAll(fileMenu, editMenu, shapesMenu, helpMenu);
         root.getChildren().add(myMenu);
 
         Slider slider = new Slider();
@@ -51,7 +62,7 @@ public class Main extends Application {
         slider.setValue(0);
 
         ProgressBar progressBar = new ProgressBar();
-        progressBar.setPrefSize(1000, 30);
+        progressBar.setPrefSize(1024, 30);
         progressBar.setProgress(0);
 
         slider.valueProperty().addListener(
@@ -59,6 +70,8 @@ public class Main extends Application {
         );
 
         root.getChildren().addAll(slider, progressBar);
+
+
 
         TableView playlistTable = new TableView<>();
         playlistTable.setPrefSize(200, 100);
@@ -91,6 +104,7 @@ public class Main extends Application {
         tracksTable.getColumns().add(artistColumn);
 
         root.getChildren().add(tracksTable);
+
 
     }
 
