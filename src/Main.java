@@ -1,3 +1,4 @@
+import Model.DatabaseConnection;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,11 +14,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    public static DatabaseConnection database;
 
     public static GraphicsContext gc;
 
     @Override
     public void start(Stage stage) throws Exception {
+        database = new DatabaseConnection("Inventory.db");
 
         VBox root = new VBox();
 

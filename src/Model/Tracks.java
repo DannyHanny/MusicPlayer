@@ -8,16 +8,16 @@ public class Tracks {
     private String length;
     private int bitrate;
     private int trackListing;
-    private int String;
+    private String year;
 
-    public Tracks(int trackId, int albumId, java.lang.String trackName, java.lang.String length, int bitrate, int trackListing, int string) {
+    public Tracks(int trackId, int albumId, java.lang.String trackName, java.lang.String length, int bitrate, int trackListing, java.lang.String year) {
         this.trackId = trackId;
         this.albumId = albumId;
         this.trackName = trackName;
         this.length = length;
         this.bitrate = bitrate;
         this.trackListing = trackListing;
-        String = string;
+        this.year = year;
     }
 
     public int getTrackId() {
@@ -68,12 +68,12 @@ public class Tracks {
         this.trackListing = trackListing;
     }
 
-    public int getString() {
-        return String;
+    public String getYear() {
+        return year;
     }
 
-    public void setString(int string) {
-        String = string;
+    public void setYear(String year) {
+        this.year = year;
     }
 
     @Override
