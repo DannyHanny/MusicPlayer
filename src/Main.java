@@ -1,17 +1,18 @@
 import Model.DatabaseConnection;
+import Model.Tracks;
+import Model.TracksService;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 public class Main extends Application {
     public static DatabaseConnection database;
@@ -20,9 +21,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        database = new DatabaseConnection("Inventory.db");
+        database = new DatabaseConnection("MusicLibrary.db");
 
         VBox root = new VBox();
+        VBox table = new VBox();
 
         Scene scene = new Scene(root, 1024, 768);
 
@@ -88,6 +90,11 @@ public class Main extends Application {
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("playlistDuration"));
         playlistTable.getColumns().add(durationColumn);
 
+        playlistTable.setFixedCellSize(25);
+        playlistTable.prefHeightProperty().bind(playlistTable.fixedCellSizeProperty().multiply(Bindings.size(playlistTable.getItems()).add(1.01)));
+        playlistTable.minHeightProperty().bind(playlistTable.prefHeightProperty());
+        playlistTable.maxHeightProperty().bind(playlistTable.prefHeightProperty());
+
         root.getChildren().add(playlistTable);
 
         TableView tracksTable = new TableView<>();
@@ -108,6 +115,11 @@ public class Main extends Application {
 
         root.getChildren().add(tracksTable);
 
+        ArrayList<Tracks> testList = new ArrayList<>();
+        TracksService.selectAll(testList, database);
+        for(Tracks c: testList) {
+            System.out.println(c);
+        }
 
     }
 

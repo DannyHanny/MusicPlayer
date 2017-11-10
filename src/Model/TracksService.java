@@ -9,7 +9,7 @@ public class TracksService {
 
     public static void selectAll(List<Tracks> targetList, DatabaseConnection database) {
 
-        PreparedStatement statement = database.newStatement("SELECT TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year, str FROM Tracks ORDER BY TrackID");
+        PreparedStatement statement = database.newStatement("SELECT TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year FROM Tracks ORDER BY TrackID");
 
         try {
             if (statement != null) {
