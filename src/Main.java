@@ -5,12 +5,24 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
@@ -24,11 +36,9 @@ public class Main extends Application {
         database = new DatabaseConnection("MusicLibrary.db");
 
         VBox root = new VBox();
-        VBox table = new VBox();
-
         Scene scene = new Scene(root, 1024, 768);
-
-        stage.setTitle("Hello World");
+        scene.getStylesheets().add("Resources/DarkTheme.css");
+        stage.setTitle("The Dan Hannen Music Player");
         stage.setScene(scene);
         stage.show();
 
@@ -78,8 +88,12 @@ public class Main extends Application {
 
 
 
+        VBox leftPane = new VBox(20);
+        leftPane.setPadding(new Insets(30));
+
         TableView playlistTable = new TableView<>();
-        playlistTable.setPrefSize(200, 100);
+        playlistTable.setPrefWidth(280);
+        playlistTable.setPrefWidth(500);
         playlistTable.setItems(playlists);
 
         TableColumn playlistColumn = new TableColumn<>("Playlist Name");
@@ -95,7 +109,10 @@ public class Main extends Application {
         playlistTable.minHeightProperty().bind(playlistTable.prefHeightProperty());
         playlistTable.maxHeightProperty().bind(playlistTable.prefHeightProperty());
 
-        root.getChildren().add(playlistTable);
+        leftPane.getChildren().add(playlistTable);
+        leftPane.setAlignment(Pos.TOP_CENTER);
+        BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
+
 
         TableView tracksTable = new TableView<>();
         tracksTable.setPrefSize(200, 100);
