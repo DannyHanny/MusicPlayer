@@ -17,7 +17,7 @@ public class PlaylistsService {
 
                 if (results != null) {
                     while (results.next()) {
-                        targetList.add(new Playlists(results.getInt("TrackID"), results.getString("PlaylistName")));
+                        targetList.add(new Playlists(results.getInt("PlaylistID"), results.getString("PlaylistName")));
                     }
                 }
             }

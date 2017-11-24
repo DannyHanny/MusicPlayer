@@ -1,6 +1,8 @@
 import Model.DatabaseConnection;
 import Model.Tracks;
 import Model.TracksService;
+import Model.Playlists;
+import Model.PlaylistsService;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -42,6 +44,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
+        VBox topContainer = new VBox();
         MenuBar myMenu = new MenuBar();
 
         Menu fileMenu = new Menu("File");
@@ -69,7 +72,9 @@ public class Main extends Application {
         helpMenu.getItems().addAll(helpItem1);
 
         myMenu.getMenus().addAll(fileMenu, editMenu, shapesMenu, helpMenu);
-        root.getChildren().add(myMenu);
+        topContainer.getChildren().add(myMenu);
+        root.setTop(topContainer);
+
 
         Slider slider = new Slider();
         slider.setMin(0);
@@ -88,16 +93,14 @@ public class Main extends Application {
         sliderBox.getChildren().addAll(slider, progressBar);
         root.setTop(sliderBox);
         sliderBox.setAlignment(Pos.CENTER);
-        BorderPane.setAlignment(sliderBox, Pos.TOP_CENTER);
-
+        BorderPane.setAlignment(sliderBox, Pos.BOTTOM_CENTER);
 
 
         VBox leftPane = new VBox(20);
         leftPane.setPadding(new Insets(30));
 
         TableView playlistTable = new TableView<>();
-        playlistTable.setPrefWidth(280);
-        playlistTable.setPrefWidth(500);
+        playlistTable.setPrefSize(500, 1000);
         playlistTable.setItems(playlists);
 
         TableColumn playlistColumn = new TableColumn<>("Playlist Name");
@@ -119,6 +122,7 @@ public class Main extends Application {
         BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
 
         VBox rightPane = new VBox();
+        rightPane.setPadding(new Insets(30));
         TableView tracksTable = new TableView<>();
         tracksTable.setPrefSize(200, 100);
         tracksTable.setItems(tracks);
@@ -136,10 +140,19 @@ public class Main extends Application {
         tracksTable.getColumns().add(artistColumn);
 
         root.getChildren().add(tracksTable);
+        rightPane.getChildren().add(tracksTable);
+        rightPane.setAlignment(Pos.CENTER);
+        BorderPane.setAlignment(rightPane, Pos.CENTER_RIGHT);
 
         ArrayList<Tracks> testList = new ArrayList<>();
         TracksService.selectAll(testList, database);
-        for(Tracks c: testList) {
+        for (Tracks c : testList) {
+            System.out.println(c);
+        }
+
+        ArrayList<Playlists> playlistsArrayList = new ArrayList<>();
+        PlaylistsService.selectAll(playlistsArrayList, database);
+        for (Playlists c : playlistsArrayList) {
             System.out.println(c);
         }
 
