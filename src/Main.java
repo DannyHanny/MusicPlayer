@@ -35,9 +35,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         database = new DatabaseConnection("MusicLibrary.db");
 
-        VBox root = new VBox();
+        BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 1024, 768);
-        scene.getStylesheets().add("Resources/DarkTheme.css");
+        //scene.getStylesheets().add("Resources/DarkTheme.css");
         stage.setTitle("The Dan Hannen Music Player");
         stage.setScene(scene);
         stage.show();
@@ -76,6 +76,7 @@ public class Main extends Application {
         slider.setMax(100);
         slider.setValue(0);
 
+        VBox sliderBox = new VBox();
         ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefSize(1024, 30);
         progressBar.setProgress(0);
@@ -84,7 +85,10 @@ public class Main extends Application {
                 (observable, old_value, new_value) -> progressBar.setProgress(new_value.doubleValue() / 100)
         );
 
-        root.getChildren().addAll(slider, progressBar);
+        sliderBox.getChildren().addAll(slider, progressBar);
+        root.setTop(sliderBox);
+        sliderBox.setAlignment(Pos.CENTER);
+        BorderPane.setAlignment(sliderBox, Pos.TOP_CENTER);
 
 
 
@@ -109,11 +113,12 @@ public class Main extends Application {
         playlistTable.minHeightProperty().bind(playlistTable.prefHeightProperty());
         playlistTable.maxHeightProperty().bind(playlistTable.prefHeightProperty());
 
+        root.setLeft(leftPane);
         leftPane.getChildren().add(playlistTable);
         leftPane.setAlignment(Pos.TOP_CENTER);
         BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
 
-
+        VBox rightPane = new VBox();
         TableView tracksTable = new TableView<>();
         tracksTable.setPrefSize(200, 100);
         tracksTable.setItems(tracks);
