@@ -37,8 +37,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         database = new DatabaseConnection("MusicLibrary.db");
 
-        BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 1024, 768);
+        VBox superRoot = new VBox();
+
+        Scene scene = new Scene(superRoot, 1024, 768);
         //scene.getStylesheets().add("Resources/DarkTheme.css");
         stage.setTitle("The Dan Hannen Music Player");
         stage.setScene(scene);
@@ -73,8 +74,10 @@ public class Main extends Application {
 
         myMenu.getMenus().addAll(fileMenu, editMenu, shapesMenu, helpMenu);
         topContainer.getChildren().add(myMenu);
-        root.setTop(topContainer);
+        superRoot.getChildren().add(topContainer);
 
+        BorderPane root = new BorderPane();
+        superRoot.getChildren().add(root);
 
         Slider slider = new Slider();
         slider.setMin(0);
@@ -97,10 +100,10 @@ public class Main extends Application {
 
 
         VBox leftPane = new VBox(20);
-        leftPane.setPadding(new Insets(30));
+        //leftPane.setPadding(new Insets(30));
 
         TableView playlistTable = new TableView<>();
-        playlistTable.setPrefSize(500, 1000);
+        playlistTable.setPrefSize(350, 300);
         playlistTable.setItems(playlists);
 
         TableColumn playlistColumn = new TableColumn<>("Playlist Name");
@@ -111,20 +114,15 @@ public class Main extends Application {
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("playlistDuration"));
         playlistTable.getColumns().add(durationColumn);
 
-        playlistTable.setFixedCellSize(25);
-        playlistTable.prefHeightProperty().bind(playlistTable.fixedCellSizeProperty().multiply(Bindings.size(playlistTable.getItems()).add(1.01)));
-        playlistTable.minHeightProperty().bind(playlistTable.prefHeightProperty());
-        playlistTable.maxHeightProperty().bind(playlistTable.prefHeightProperty());
-
         root.setLeft(leftPane);
         leftPane.getChildren().add(playlistTable);
         leftPane.setAlignment(Pos.TOP_CENTER);
         BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
 
-        VBox rightPane = new VBox();
-        rightPane.setPadding(new Insets(30));
+        VBox centrePane = new VBox(20);
+        //centrePane.setPadding(new Insets(50));
         TableView tracksTable = new TableView<>();
-        tracksTable.setPrefSize(200, 100);
+        tracksTable.setPrefSize(675, 1000);
         tracksTable.setItems(tracks);
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
@@ -139,10 +137,10 @@ public class Main extends Application {
         artistColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
         tracksTable.getColumns().add(artistColumn);
 
-        root.getChildren().add(tracksTable);
-        rightPane.getChildren().add(tracksTable);
-        rightPane.setAlignment(Pos.CENTER);
-        BorderPane.setAlignment(rightPane, Pos.CENTER_RIGHT);
+        root.setRight(centrePane);
+        centrePane.getChildren().add(tracksTable);
+        centrePane.setAlignment(Pos.CENTER);
+        BorderPane.setAlignment(centrePane, Pos.CENTER);
 
         ArrayList<Tracks> testList = new ArrayList<>();
         TracksService.selectAll(testList, database);
