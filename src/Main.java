@@ -4,10 +4,8 @@ import Model.TracksService;
 import Model.Playlists;
 import Model.PlaylistsService;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -16,15 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
@@ -103,7 +93,7 @@ public class Main extends Application {
         //leftPane.setPadding(new Insets(30));
 
         TableView playlistTable = new TableView<>();
-        playlistTable.setPrefSize(350, 300);
+        playlistTable.setPrefSize(300, 500);
         playlistTable.setItems(playlists);
 
         TableColumn playlistColumn = new TableColumn<>("Playlist Name");
@@ -114,6 +104,9 @@ public class Main extends Application {
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("playlistDuration"));
         playlistTable.getColumns().add(durationColumn);
 
+        playlistColumn.setPrefWidth(270);
+        durationColumn.setPrefWidth(50);
+
         root.setLeft(leftPane);
         leftPane.getChildren().add(playlistTable);
         leftPane.setAlignment(Pos.TOP_CENTER);
@@ -122,7 +115,7 @@ public class Main extends Application {
         VBox centrePane = new VBox(20);
         //centrePane.setPadding(new Insets(50));
         TableView tracksTable = new TableView<>();
-        tracksTable.setPrefSize(675, 1000);
+        tracksTable.setPrefSize(725, 1300);
         tracksTable.setItems(tracks);
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
@@ -141,6 +134,14 @@ public class Main extends Application {
         centrePane.getChildren().add(tracksTable);
         centrePane.setAlignment(Pos.CENTER);
         BorderPane.setAlignment(centrePane, Pos.CENTER);
+
+        ImageView imageView = new ImageView("Resources/LCD.jpg");
+        imageView.setFitHeight(300);
+        imageView.setFitWidth(300);
+        imageView.setPreserveRatio(true);
+
+        VBox img = new VBox(imageView);
+        root.setBottom(img);
 
         ArrayList<Tracks> testList = new ArrayList<>();
         TracksService.selectAll(testList, database);
