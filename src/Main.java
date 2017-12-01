@@ -1,3 +1,4 @@
+import Controller.MainController;
 import Model.DatabaseConnection;
 import Model.Tracks;
 import Model.TracksService;
@@ -7,7 +8,6 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
@@ -15,24 +15,26 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
 public class Main extends Application {
     public static DatabaseConnection database;
-
-    public static GraphicsContext gc;
+    private static MainController controller;
 
     @Override
     public void start(Stage stage) throws Exception {
         database = new DatabaseConnection("MusicLibrary.db");
 
-        VBox superRoot = new VBox();
+        VBox superRoot = new VBox(40);
 
         Scene scene = new Scene(superRoot, 1024, 768);
         //scene.getStylesheets().add("Resources/DarkTheme.css");
         stage.setTitle("The Dan Hannen Music Player");
+        stage.setResizable(false);
         stage.setScene(scene);
+        stage.setOnCloseRequest((WindowEvent we) -> controller.exitPrompt(we));
         stage.show();
 
         VBox topContainer = new VBox();
@@ -89,9 +91,7 @@ public class Main extends Application {
         BorderPane.setAlignment(sliderBox, Pos.BOTTOM_CENTER);
 
 
-        VBox leftPane = new VBox(20);
-        //leftPane.setPadding(new Insets(30));
-
+        VBox leftPane = new VBox();
         TableView playlistTable = new TableView<>();
         playlistTable.setPrefSize(300, 500);
         playlistTable.setItems(playlists);
@@ -104,18 +104,17 @@ public class Main extends Application {
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("playlistDuration"));
         playlistTable.getColumns().add(durationColumn);
 
-        playlistColumn.setPrefWidth(270);
-        durationColumn.setPrefWidth(50);
+        playlistColumn.setPrefWidth(223);
+        durationColumn.setPrefWidth(75);
 
         root.setLeft(leftPane);
         leftPane.getChildren().add(playlistTable);
         leftPane.setAlignment(Pos.TOP_CENTER);
         BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
 
-        VBox centrePane = new VBox(20);
-        //centrePane.setPadding(new Insets(50));
+        VBox centrePane = new VBox();
         TableView tracksTable = new TableView<>();
-        tracksTable.setPrefSize(725, 1300);
+        tracksTable.setPrefSize(733, 1000);
         tracksTable.setItems(tracks);
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
@@ -130,6 +129,10 @@ public class Main extends Application {
         artistColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
         tracksTable.getColumns().add(artistColumn);
 
+        trackColumn.setPrefWidth(244);
+        albumColumn.setPrefWidth(244);
+        artistColumn.setPrefWidth(244);
+
         root.setRight(centrePane);
         centrePane.getChildren().add(tracksTable);
         centrePane.setAlignment(Pos.CENTER);
@@ -140,8 +143,8 @@ public class Main extends Application {
         imageView.setFitWidth(300);
         imageView.setPreserveRatio(true);
 
-        VBox img = new VBox(imageView);
-        root.setBottom(img);
+        leftPane.getChildren().add(imageView);
+
 
         ArrayList<Tracks> testList = new ArrayList<>();
         TracksService.selectAll(testList, database);
