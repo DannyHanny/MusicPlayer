@@ -14,8 +14,10 @@ public class MainController {
     private TableView<Playlists> playlistsTable;
 
     private DatabaseConnection database;
+    private ArrayList<TracksView> allTracksViews = new ArrayList<>();
+    private ArrayList<Playlists> allPlaylistViews = new ArrayList<>();
 
-    public MainController(ListView<Tracks> tracksList, ListView<Playlists> playlistsList) {
+    public MainController(TableView<TracksView> tracksTable, TableView<Playlists> playlistsTable) {
 
         System.out.println("Initialising main controller...");
 
@@ -23,9 +25,40 @@ public class MainController {
         this.playlistsTable = playlistsTable;
 
         database = new DatabaseConnection("MusicLibrary.db");
+
+        updateTables(0, 0);
     }
 
-    public void updateTracks(){
+    public void updateTables(int selectedPlaylistId, int selectedTrackId){
+        allTracksViews.clear();
+        TracksService.selectForTable(allTracksViews, database);
+
+        tracksTable.setItems(FXCollections.observableList(allTracksViews));
+
+        playlistsTable.getItems().clear();
+        PlaylistsService.selectAll(playlistsTable.getItems(), database);
+
+        if (selectedPlaylistId != 0) {
+            for (int n = 0; n < playlistsTable.getItems().size(); n++) {
+                if (playlistsTable.getItems().get(n).getPlaylistId() == selectedPlaylistId) {
+                    playlistsTable.getSelectionModel().select(n);
+                    playlistsTable.getFocusModel().focus(n);
+                    playlistsTable.scrollTo(n);
+                    break;
+                }
+            }
+        }
+
+        if (selectedTrackId != 0) {
+            for (int n = 0; n < tracksTable.getItems().size(); n++) {
+                if (tracksTable.getItems().get(n).getTrackId() == selectedTrackId) {
+                    tracksTable.getSelectionModel().select(n);
+                    tracksTable.getFocusModel().focus(n);
+                    tracksTable.scrollTo(n);
+                    break;
+                }
+            }
+        }
 
     }
 

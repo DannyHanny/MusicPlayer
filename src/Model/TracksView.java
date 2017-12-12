@@ -7,12 +7,14 @@ public class TracksView {
     private final SimpleStringProperty trackName;
     private final SimpleStringProperty albumName;
     private final SimpleStringProperty artistName;
+    private final SimpleStringProperty length;
 
-    public TracksView(int trackId, SimpleStringProperty trackName, SimpleStringProperty albumName, SimpleStringProperty artistName) {
+    public TracksView(int trackId, String trackName, String albumName, String artistName, String length) {
         this.trackId = trackId;
-        this.trackName = trackName;
-        this.albumName = albumName;
-        this.artistName = artistName;
+        this.trackName = new SimpleStringProperty(trackName);
+        this.albumName = new SimpleStringProperty(albumName);
+        this.artistName = new SimpleStringProperty(artistName);
+        this.length = new SimpleStringProperty(length);
     }
 
     public int getTrackId() {
@@ -46,5 +48,13 @@ public class TracksView {
 
     public void setArtistName(String artistName) {
         this.artistName.set(artistName);
+    }
+
+    public String getLength() {
+        return length.get();
+    }
+
+    public void setLength(String length) {
+        this.length.set(length);
     }
 }

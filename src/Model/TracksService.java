@@ -27,4 +27,33 @@ public class TracksService {
         }
     }
 
+    public static void selectForTable(List<TracksView> targetList, DatabaseConnection database){
+        PreparedStatement statement = database.newStatement(
+            "SELECT Tracks.TrackID As 'id', Tracks.TrackName As 'track', Albums.AlbumName As 'album', Artists.ArtistName As 'artist', Tracks.Length FROM Tracks " +
+                    "INNER JOIN Albums ON Albums.AlbumID = Tracks.AlbumID " +
+                    "INNER JOIN Artists ON Artists.ArtistID = Albums.ArtistID"
+        );
+
+        try {
+            if (statement != null) {
+
+                ResultSet results = database.executeQuery(statement);
+
+                if (results != null) {
+                    while (results.next()) {
+                        targetList.add(new TracksView(
+                                results.getInt("id"),
+                                results.getString("track"),
+                                results.getString("album"),
+                                results.getString("artist"),
+                                results.getString("length")
+                        ));
+                    }
+                }
+            }
+        } catch (SQLException resultsException) {
+            System.out.println("Database select all error: " + resultsException.getMessage());
+        }
+    }
+
 }

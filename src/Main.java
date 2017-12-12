@@ -1,9 +1,5 @@
 import Controller.MainController;
-import Model.DatabaseConnection;
-import Model.Tracks;
-import Model.TracksService;
-import Model.Playlists;
-import Model.PlaylistsService;
+import Model.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +18,9 @@ import java.util.ArrayList;
 public class Main extends Application {
     public static DatabaseConnection database;
     private static MainController controller;
+
+    private static TableView<TracksView> tracksTable = new TableView<>();
+    private static TableView<Playlists> playlistsTable = new TableView<>();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -174,6 +173,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        controller = new MainController(tracksTable, playlistsTable);
+
         launch(args);
+
     }
 }
