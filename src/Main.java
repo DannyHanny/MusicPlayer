@@ -21,8 +21,8 @@ public class Main extends Application {
     public static DatabaseConnection database;
     private static MainController controller;
 
-    //private static TableView<TracksView> tracksTable = new TableView<>();
-    //private static TableView<Playlists> playlistsTable = new TableView<>();
+    private static TableView<TracksView> tracksTable = new TableView<>();
+    private static TableView<Playlists> playlistsTable = new TableView<>();
 
     @Override
     public void start(Stage stage) {

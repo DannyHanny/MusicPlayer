@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -19,6 +20,7 @@ import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,18 +37,18 @@ public class MainController {
     private ArrayList<Playlists> allPlaylistViews = new ArrayList<>();
     private MediaView mediaView;
     private IsMediaPlayingBinding isMediaPlayingBinding;
+    private Slider slider;
 
     public MainController() {
 
         System.out.println("Initialising main controller...");
 
         this.view = createView();
-        //this.tracksTable = tracksTable;
-        //this.playlistsTable = playlistsTable;
+        this.tracksTable = tracksTable;
+        this.playlistsTable = playlistsTable;
 
         database = new DatabaseConnection("MusicLibrary.db");
 
-        //updateTables(0, 0);
     }
 
     public void updateTables(int selectedPlaylistId, int selectedTrackId){
@@ -132,19 +134,22 @@ public class MainController {
         BorderPane root = new BorderPane();
         superRoot.getChildren().add(root);
 
-        Slider slider = new Slider();
-        slider.setMin(0);
-        slider.setMax(100);
-        slider.setValue(0);
+        this.mediaView = new MediaView();
+
+        this.slider = new Slider();
+        this.slider.setMin(0);
+        this.slider.setMax(1024);
+        this.slider.setValue(0);
+        this.slider.disableProperty().bind(this.mediaView.mediaPlayerProperty().isNull());
 
         VBox sliderBox = new VBox();
+
+        HBox playControls = new HBox();
 
         ImageView play = new ImageView("Resources/play.png");
         play.setFitHeight(30);
         play.setFitWidth(30);
 
-        this.mediaView = new MediaView();
-        HBox playControls = new HBox();
         Button playBtn = new Button();
         playBtn.setGraphic(play);
         playBtn.setStyle("-fx-background-color: transparent; -fx-padding: 5, 5, 5, 5;");
@@ -154,7 +159,13 @@ public class MainController {
         });
         playBtn.disableProperty().bind(this.mediaView.mediaPlayerProperty().isNull().or(isMediaPlayingBinding));
 
-        Button pauseBtn = new Button("Pause");
+        ImageView pause = new ImageView("Resources/pause.png");
+        pause.setFitHeight(33);
+        pause.setFitWidth(33);
+
+        Button pauseBtn = new Button();
+        pauseBtn.setGraphic(pause);
+        pauseBtn.setStyle("-fx-background-color: transparent; -fx-padding: 5, 5, 5, 5;");
         pauseBtn.disableProperty().bind(this.mediaView.mediaPlayerProperty().isNull().or(isMediaPlayingBinding.not()));
         pauseBtn.setOnAction(event -> this.mediaView.getMediaPlayer().pause());
 
@@ -164,7 +175,17 @@ public class MainController {
         progressBar.setProgress(0);
 
         slider.valueProperty().addListener(
-                (observable, old_value, new_value) -> progressBar.setProgress(new_value.doubleValue() / 100)
+                observable -> {
+                    if (slider.isValueChanging()) {
+                        MediaPlayer mediaPlayer = this.mediaView.getMediaPlayer();
+                        Duration totalDuration = mediaPlayer.getTotalDuration();
+                        if (!totalDuration.isIndefinite() && !totalDuration.isUnknown()) {
+                            double progress = slider.getValue() / 1024;
+                            mediaPlayer.seek(totalDuration.multiply(progress));
+                            progressBar.setProgress(progress);
+                        }
+                    }
+                }
         );
 
         this.mediaView.mediaPlayerProperty().addListener((observable, oldValue, newValue) -> {
@@ -270,10 +291,25 @@ public class MainController {
     public void openFile(File file) {
         try {
             final Media media = new Media(file.toURI().toString());
-            MediaPlayer mp = new MediaPlayer(media);
+            final MediaPlayer mp = new MediaPlayer(media);
             this.mediaView.setMediaPlayer(mp);
             mp.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
             mp.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
+            mp.currentTimeProperty().addListener(observable -> {
+                Platform.runLater( () -> {
+                    Duration currentTime = mp.getCurrentTime();
+                    Duration duration = mp.getTotalDuration();
+                    if (!slider.isDisabled()
+                            && duration.greaterThan(Duration.ZERO)
+                            && !slider.isValueChanging()) {
+                        int progress = (int) (1024.0 * currentTime.toSeconds() / duration.toSeconds());
+                        if (progress > 0) {
+                            slider.setValue(progress);
+                        }
+                    }
+
+                });
+            });
         } catch (MediaException e) {
             if (e.getType() == MediaException.Type.MEDIA_UNSUPPORTED) {
                 displayError("Not a playable file");
