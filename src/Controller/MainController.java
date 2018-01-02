@@ -4,6 +4,7 @@ import Model.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -13,10 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaException;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import javafx.scene.media.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -29,7 +27,8 @@ import java.util.Optional;
 public class MainController {
 
     private final Parent view;
-    private TableView<TracksView> tracksTable;
+    //private TableView<TracksView> tracksTable;
+    private TableView<Track> tracksTable;
     private TableView<Playlists> playlistsTable;
 
     private DatabaseConnection database;
@@ -44,45 +43,45 @@ public class MainController {
         System.out.println("Initialising main controller...");
 
         this.view = createView();
-        this.tracksTable = tracksTable;
-        this.playlistsTable = playlistsTable;
+        //this.tracksTable = tracksTable;
+        //this.playlistsTable = playlistsTable;
 
         database = new DatabaseConnection("MusicLibrary.db");
 
     }
 
-    public void updateTables(int selectedPlaylistId, int selectedTrackId){
-        allTracksViews.clear();
-        TracksService.selectForTable(allTracksViews, database);
-
-        tracksTable.setItems(FXCollections.observableList(allTracksViews));
-
-        playlistsTable.getItems().clear();
-        PlaylistsService.selectAll(playlistsTable.getItems(), database);
-
-        if (selectedPlaylistId != 0) {
-            for (int n = 0; n < playlistsTable.getItems().size(); n++) {
-                if (playlistsTable.getItems().get(n).getPlaylistId() == selectedPlaylistId) {
-                    playlistsTable.getSelectionModel().select(n);
-                    playlistsTable.getFocusModel().focus(n);
-                    playlistsTable.scrollTo(n);
-                    break;
-                }
-            }
-        }
-
-        if (selectedTrackId != 0) {
-            for (int n = 0; n < tracksTable.getItems().size(); n++) {
-                if (tracksTable.getItems().get(n).getTrackId() == selectedTrackId) {
-                    tracksTable.getSelectionModel().select(n);
-                    tracksTable.getFocusModel().focus(n);
-                    tracksTable.scrollTo(n);
-                    break;
-                }
-            }
-        }
-
-    }
+//    public void updateTables(int selectedPlaylistId, int selectedTrackId){
+//        allTracksViews.clear();
+//        TracksService.selectForTable(allTracksViews, database);
+//
+//        tracksTable.setItems(FXCollections.observableList(allTracksViews));
+//
+//        playlistsTable.getItems().clear();
+//        PlaylistsService.selectAll(playlistsTable.getItems(), database);
+//
+//        if (selectedPlaylistId != 0) {
+//            for (int n = 0; n < playlistsTable.getItems().size(); n++) {
+//                if (playlistsTable.getItems().get(n).getPlaylistId() == selectedPlaylistId) {
+//                    playlistsTable.getSelectionModel().select(n);
+//                    playlistsTable.getFocusModel().focus(n);
+//                    playlistsTable.scrollTo(n);
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (selectedTrackId != 0) {
+//            for (int n = 0; n < tracksTable.getItems().size(); n++) {
+//                if (tracksTable.getItems().get(n).getTrackId() == selectedTrackId) {
+//                    tracksTable.getSelectionModel().select(n);
+//                    tracksTable.getFocusModel().focus(n);
+//                    tracksTable.scrollTo(n);
+//                    break;
+//                }
+//            }
+//        }
+//
+//    }
 
     private Parent createView() {
         VBox superRoot = new VBox(0);
@@ -226,9 +225,39 @@ public class MainController {
                 new Track("Dum Surfer", "Dum Surfer", "King Krule")
         );
         VBox centrePane = new VBox();
-        TableView tracksTable = new TableView<>();
+        this.tracksTable = new TableView<>();
         tracksTable.setPrefSize(733, 1000);
         tracksTable.setItems(tracks);
+        tracksTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                if (newValue.getMediaPlayer().isPresent()) {
+                    // optimisation where we just added the file to the list of tracks so we already have the Media object
+                    MediaPlayer mp = newValue.getMediaPlayer().get();
+                    this.mediaView.setMediaPlayer(mp);
+                    mp.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
+                    mp.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
+
+                    mp.currentTimeProperty().addListener(o2 -> {
+                        Platform.runLater(() -> {
+                            Duration currentTime = mp.getCurrentTime();
+                            Duration duration = mp.getTotalDuration();
+                            if (!slider.isDisabled()
+                                    && duration.greaterThan(Duration.ZERO)
+                                    && !slider.isValueChanging()) {
+                                int progress = (int) (1024.0 * currentTime.toSeconds() / duration.toSeconds());
+                                if (progress > 0) {
+                                    slider.setValue(progress);
+                                }
+                            }
+
+                        });
+                    });
+                } else {
+
+                }
+
+            }
+        });
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
         trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackTitle"));
@@ -289,26 +318,30 @@ public class MainController {
     }
 
     public void openFile(File file) {
+        String absolutePath = file.getAbsolutePath();
         try {
             final Media media = new Media(file.toURI().toString());
             final MediaPlayer mp = new MediaPlayer(media);
-            this.mediaView.setMediaPlayer(mp);
-            mp.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
-            mp.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
-            mp.currentTimeProperty().addListener(observable -> {
-                Platform.runLater( () -> {
-                    Duration currentTime = mp.getCurrentTime();
-                    Duration duration = mp.getTotalDuration();
-                    if (!slider.isDisabled()
-                            && duration.greaterThan(Duration.ZERO)
-                            && !slider.isValueChanging()) {
-                        int progress = (int) (1024.0 * currentTime.toSeconds() / duration.toSeconds());
-                        if (progress > 0) {
-                            slider.setValue(progress);
-                        }
-                    }
+            mp.setOnReady(() -> {
+                System.out.println(media.getMetadata());
+                System.out.println(media.getTracks());
 
-                });
+                if (!IsSingleAudioTrack(media)) {
+                    displayError("Can only add single audio tracks");
+                    return;
+                }
+
+                Result<Track> result = addToDb(media);
+                if (result.fail()) {
+                    displayError("Unexpected error adding track");
+                    return;
+                }
+
+                Track t = result.result();
+                t.setMediaPlayer(mp);
+                this.tracksTable.getItems().add(t);
+                this.tracksTable.getSelectionModel().select(this.tracksTable.getItems().size() - 1);
+
             });
         } catch (MediaException e) {
             if (e.getType() == MediaException.Type.MEDIA_UNSUPPORTED) {
@@ -316,6 +349,21 @@ public class MainController {
             }
         }
     }
+
+    private Result<Track> addToDb(Media media) {
+        ObservableMap<String, Object> metadata = media.getMetadata();
+        return new Result(new Track((String) metadata.get("title"), (String) metadata.get("album"), (String) metadata.get("artist")));
+    }
+
+    private boolean IsSingleAudioTrack(Media media) {
+        ObservableList<javafx.scene.media.Track> tracks = media.getTracks();
+        return tracks.size() == 1 && tracks.get(0) instanceof AudioTrack;
+    }
+
+    private boolean fileExistsInDb(String absolutePath) {
+        return false;
+    }
+
 
     public Parent view() {
         return this.view;
