@@ -239,15 +239,15 @@ public class MainController {
               }      });
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
-        trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackTitle"));
+        trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackName"));
         tracksTable.getColumns().add(trackColumn);
 
         TableColumn albumColumn = new TableColumn<>("Album");
-        albumColumn.setCellValueFactory(new PropertyValueFactory<>("album"));
+        albumColumn.setCellValueFactory(new PropertyValueFactory<>("albumName"));
         tracksTable.getColumns().add(albumColumn);
 
         TableColumn artistColumn = new TableColumn<>("Artist");
-        artistColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
+        artistColumn.setCellValueFactory(new PropertyValueFactory<>("artistName"));
         tracksTable.getColumns().add(artistColumn);
 
         trackColumn.setPrefWidth(244);
