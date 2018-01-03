@@ -27,8 +27,7 @@ import java.util.Optional;
 public class MainController {
 
     private final Parent view;
-    //private TableView<TracksView> tracksTable;
-    private TableView<Track> tracksTable;
+    private TableView<TracksView> tracksTable;
     private TableView<Playlists> playlistsTable;
 
     private DatabaseConnection database;
@@ -50,38 +49,38 @@ public class MainController {
 
     }
 
-//    public void updateTables(int selectedPlaylistId, int selectedTrackId){
-//        allTracksViews.clear();
-//        TracksService.selectForTable(allTracksViews, database);
-//
-//        tracksTable.setItems(FXCollections.observableList(allTracksViews));
-//
-//        playlistsTable.getItems().clear();
-//        PlaylistsService.selectAll(playlistsTable.getItems(), database);
-//
-//        if (selectedPlaylistId != 0) {
-//            for (int n = 0; n < playlistsTable.getItems().size(); n++) {
-//                if (playlistsTable.getItems().get(n).getPlaylistId() == selectedPlaylistId) {
-//                    playlistsTable.getSelectionModel().select(n);
-//                    playlistsTable.getFocusModel().focus(n);
-//                    playlistsTable.scrollTo(n);
-//                    break;
-//                }
-//            }
-//        }
-//
-//        if (selectedTrackId != 0) {
-//            for (int n = 0; n < tracksTable.getItems().size(); n++) {
-//                if (tracksTable.getItems().get(n).getTrackId() == selectedTrackId) {
-//                    tracksTable.getSelectionModel().select(n);
-//                    tracksTable.getFocusModel().focus(n);
-//                    tracksTable.scrollTo(n);
-//                    break;
-//                }
-//            }
-//        }
-//
-//    }
+//public void updateTables(int selectedPlaylistId, int selectedTrackId){
+//      allTracksViews.clear();
+//      TracksService.selectForTable(allTracksViews, database);
+
+//      tracksTable.setItems(FXCollections.observableList(allTracksViews));
+
+//      playlistsTable.getItems().clear();
+//      PlaylistsService.selectAll(playlistsTable.getItems(), database);
+
+//      if (selectedPlaylistId != 0) {
+//          for (int n = 0; n < playlistsTable.getItems().size(); n++) {
+//              if (playlistsTable.getItems().get(n).getPlaylistId() == selectedPlaylistId) {
+//                  playlistsTable.getSelectionModel().select(n);
+//                  playlistsTable.getFocusModel().focus(n);
+//                  playlistsTable.scrollTo(n);
+//                  break;
+//              }
+//          }
+//      }
+
+//      if (selectedTrackId != 0) {
+//          for (int n = 0; n < tracksTable.getItems().size(); n++) {
+//              if (tracksTable.getItems().get(n).getTrackId() == selectedTrackId) {
+//                  tracksTable.getSelectionModel().select(n);
+//                  tracksTable.getFocusModel().focus(n);
+//                  tracksTable.scrollTo(n);
+//                  break;
+//              }
+//          }
+//      }
+
+//  }
 
     private Parent createView() {
         VBox superRoot = new VBox(0);
@@ -90,9 +89,29 @@ public class MainController {
         MenuBar myMenu = new MenuBar();
 
         Menu fileMenu = new Menu("File");
-        MenuItem openItem = new MenuItem("Open...");
+        MenuItem newPlaylistItem = new MenuItem("New Playlist...");
+        newPlaylistItem.setOnAction(event -> {
+            TextInputDialog inputDialog = new TextInputDialog();
+            inputDialog.setTitle("Playlist");
+            inputDialog.setHeaderText("Enter playlist name");
+            inputDialog.setContentText("Name");
+            Optional<String> name = inputDialog.showAndWait();
+            if (name.isPresent() && !name.get().isEmpty()) {
+                Result<Playlists> result = PlaylistsService.CreatePlaylist(name.get());
+                if (result.success())
+                {
+                    Playlists createdPlaylist = result.payload();
+                    this.playlistsTable.getItems().add(createdPlaylist);
+                    this.playlistsTable.getSelectionModel().select(this.playlistsTable.getItems().size() - 1);
+
+                } else {
+                    displayError(result.error());
+                }
+            }
+        });
+        MenuItem addTrackItem = new MenuItem("Add Track...");
         final FileChooser fileChooser = new FileChooser();
-        openItem.setOnAction(event -> {
+        addTrackItem.setOnAction(event -> {
             MenuItem m = (MenuItem) event.getSource();
             while (m.getParentPopup() == null) {
                 m = m.getParentMenu();
@@ -100,15 +119,17 @@ public class MainController {
 
             Window w = m.getParentPopup().getOwnerWindow();
             File file = fileChooser.showOpenDialog(w);
-            if (file != null) {
-                this.openFile(file);
-            }
+          if (file != null) {
+              this.openFile(file);
+          }
         });
         MenuItem fileItem2 = new MenuItem("Add folder...");
-        MenuItem fileItem3 = new MenuItem("New Playlist...");
+        fileItem2.setOnAction(event -> {featureNotYetImplemented();});
         MenuItem fileItem4 = new MenuItem("Settings");
+        fileItem4.setOnAction(event -> {featureNotYetImplemented();});
         MenuItem fileItem5 = new MenuItem("Exit");
-        fileMenu.getItems().addAll(openItem, fileItem2, fileItem3, fileItem4, fileItem5);
+        fileItem5.setOnAction(event -> {featureNotYetImplemented();});
+        fileMenu.getItems().addAll(newPlaylistItem, addTrackItem, fileItem2, fileItem4, fileItem5);
 
         Menu editMenu = new Menu("Edit");
         MenuItem editItem1 = new MenuItem("Undo");
@@ -194,70 +215,61 @@ public class MainController {
         sliderBox.setAlignment(Pos.CENTER);
         BorderPane.setAlignment(sliderBox, Pos.BOTTOM_CENTER);
 
-        ObservableList<Playlist> playlists = FXCollections.observableArrayList(
-                new Playlist("Playlist 1", "12:05"),
-                new Playlist("Playlist 2", "2:08")
-        );
         VBox leftPane = new VBox();
-        TableView playlistTable = new TableView<>();
-        playlistTable.setPrefSize(300, 500);
-        playlistTable.setItems(playlists);
+        this.playlistsTable = new TableView<>();
+        this.playlistsTable.setPrefSize(300, 500);
+       // playlistTable.setItems(playlists);
+        addTrackItem.disableProperty().bind(this.playlistsTable.getSelectionModel().selectedItemProperty().isNull());
 
         TableColumn playlistColumn = new TableColumn<>("Playlist Name");
         playlistColumn.setCellValueFactory(new PropertyValueFactory<>("playlistName"));
-        playlistTable.getColumns().add(playlistColumn);
+        this.playlistsTable.getColumns().add(playlistColumn);
 
         TableColumn durationColumn = new TableColumn<>("Duration");
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("playlistDuration"));
-        playlistTable.getColumns().add(durationColumn);
+        this.playlistsTable.getColumns().add(durationColumn);
 
         playlistColumn.setPrefWidth(223);
         durationColumn.setPrefWidth(75);
 
         root.setLeft(leftPane);
-        leftPane.getChildren().add(playlistTable);
+        leftPane.getChildren().add(this.playlistsTable);
         leftPane.setAlignment(Pos.TOP_CENTER);
         BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
 
 
-        ObservableList<Track> tracks = FXCollections.observableArrayList(
-                new Track("Losing My Edge", "LCD Soundsystem", "LCD Soundsystem"),
-                new Track("Dum Surfer", "Dum Surfer", "King Krule")
-        );
         VBox centrePane = new VBox();
         this.tracksTable = new TableView<>();
         tracksTable.setPrefSize(733, 1000);
-        tracksTable.setItems(tracks);
         tracksTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                if (newValue.getMediaPlayer().isPresent()) {
-                    // optimisation where we just added the file to the list of tracks so we already have the Media object
-                    MediaPlayer mp = newValue.getMediaPlayer().get();
-                    this.mediaView.setMediaPlayer(mp);
-                    mp.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
-                    mp.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
+              if (newValue != null) {
+                  if (newValue.getMediaPlayer().isPresent()) {
+                      // optimisation where we just added the file to the list of tracks so we already have the Media object
+                      MediaPlayer mp = newValue.getMediaPlayer().get();
+                      this.mediaView.setMediaPlayer(mp);
+                      mp.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
+                      mp.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
 
-                    mp.currentTimeProperty().addListener(o2 -> {
-                        Platform.runLater(() -> {
-                            Duration currentTime = mp.getCurrentTime();
-                            Duration duration = mp.getTotalDuration();
-                            if (!slider.isDisabled()
-                                    && duration.greaterThan(Duration.ZERO)
-                                    && !slider.isValueChanging()) {
-                                int progress = (int) (1024.0 * currentTime.toSeconds() / duration.toSeconds());
-                                if (progress > 0) {
-                                    slider.setValue(progress);
-                                }
-                            }
+                      mp.currentTimeProperty().addListener(o2 -> {
+                          Platform.runLater(() -> {
+                              Duration currentTime = mp.getCurrentTime();
+                              Duration duration = mp.getTotalDuration();
+                              if (!slider.isDisabled()
+                                      && duration.greaterThan(Duration.ZERO)
+                                      && !slider.isValueChanging()) {
+                                  int progress = (int) (1024.0 * currentTime.toSeconds() / duration.toSeconds());
+                                  if (progress > 0) {
+                                      slider.setValue(progress);
+                                  }
+                              }
 
-                        });
-                    });
-                } else {
+                          });
+                      });
+                  } else {
 
-                }
+                  }
 
-            }
-        });
+              }      });
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
         trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackTitle"));
@@ -317,43 +329,55 @@ public class MainController {
 
     }
 
-    public void openFile(File file) {
-        String absolutePath = file.getAbsolutePath();
-        try {
-            final Media media = new Media(file.toURI().toString());
-            final MediaPlayer mp = new MediaPlayer(media);
-            mp.setOnReady(() -> {
-                System.out.println(media.getMetadata());
-                System.out.println(media.getTracks());
-
-                if (!IsSingleAudioTrack(media)) {
-                    displayError("Can only add single audio tracks");
-                    return;
-                }
-
-                Result<Track> result = addToDb(media);
-                if (result.fail()) {
-                    displayError("Unexpected error adding track");
-                    return;
-                }
-
-                Track t = result.result();
-                t.setMediaPlayer(mp);
-                this.tracksTable.getItems().add(t);
-                this.tracksTable.getSelectionModel().select(this.tracksTable.getItems().size() - 1);
-
-            });
-        } catch (MediaException e) {
-            if (e.getType() == MediaException.Type.MEDIA_UNSUPPORTED) {
-                displayError("Not a playable file");
-            }
-        }
+    private void featureNotYetImplemented(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("");
+        alert.setHeaderText(null);
+        alert.setContentText("Feature not yet implemented.");
+        alert.showAndWait();
     }
 
-    private Result<Track> addToDb(Media media) {
-        ObservableMap<String, Object> metadata = media.getMetadata();
-        return new Result(new Track((String) metadata.get("title"), (String) metadata.get("album"), (String) metadata.get("artist")));
-    }
+  public void openFile(File file) {
+      String absolutePath = file.getAbsolutePath();
+      if (fileExistsInDb(absolutePath)){
+          displayError("File already saved");
+      }
+      else{
+          try {
+              final Media media = new Media(file.toURI().toString());
+              final MediaPlayer mp = new MediaPlayer(media);
+              mp.setOnReady(() -> {
+
+                  if (!IsSingleAudioTrack(media)) {
+                      displayError("Can only add single audio tracks");
+                      return;
+                  }
+
+                  ObservableMap<String, Object> metadata = media.getMetadata();
+                  String title = (String) metadata.get("title");
+                  String album = (String) metadata.get("album");
+                  String artist = (String) metadata.get("artist");
+                  Result<Tracks> result = TracksService.CreateTrack(absolutePath, title, album, artist);
+                  if (result.fail()) {
+                      displayError("Unexpected error adding track");
+                      return;
+                  }
+
+                  Tracks t = result.payload();
+                  TracksView tv = new TracksView(t.getTrackId(), title, album, artist, "unknown");
+                  tv.setMediaPlayer(mp);
+                  this.tracksTable.getItems().add(tv);
+                  this.tracksTable.getSelectionModel().select(this.tracksTable.getItems().size() - 1);
+
+              });
+      } catch (MediaException e) {
+              if (e.getType() == MediaException.Type.MEDIA_UNSUPPORTED) {
+                  displayError("Not a playable file");
+              }
+          }
+      }
+  }
+
 
     private boolean IsSingleAudioTrack(Media media) {
         ObservableList<javafx.scene.media.Track> tracks = media.getTracks();

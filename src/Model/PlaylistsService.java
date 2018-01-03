@@ -26,4 +26,8 @@ public class PlaylistsService {
         }
     }
 
+    public static Result<Playlists> CreatePlaylist(String name) {
+        return new Result(new Playlists(0, name));
+    }
+
 }

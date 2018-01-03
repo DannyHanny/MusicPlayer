@@ -1,6 +1,9 @@
 package Model;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.media.MediaPlayer;
+
+import java.util.Optional;
 
 public class TracksView {
     private int trackId;
@@ -8,6 +11,8 @@ public class TracksView {
     private final SimpleStringProperty albumName;
     private final SimpleStringProperty artistName;
     private final SimpleStringProperty length;
+
+    private MediaPlayer mediaPlayer;
 
     public TracksView(int trackId, String trackName, String albumName, String artistName, String length) {
         this.trackId = trackId;
@@ -57,4 +62,8 @@ public class TracksView {
     public void setLength(String length) {
         this.length.set(length);
     }
+
+    public Optional<MediaPlayer> getMediaPlayer() { return Optional.ofNullable(this.mediaPlayer); }
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer) { this.mediaPlayer = mediaPlayer; }
 }

@@ -1,18 +1,9 @@
 import Controller.MainController;
-import Controller.Playlist;
-import Controller.Track;
 import Model.*;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.geometry.Pos;
-import javafx.scene.image.ImageView;
 import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;

@@ -56,4 +56,8 @@ public class TracksService {
         }
     }
 
+    public static Result<Tracks> CreateTrack(String absolutePath, String title, String album, String artist) {
+        return new Result(new Tracks(100, 200, title, "unknown", 19200, 5, "2017"));
+    }
+
 }
