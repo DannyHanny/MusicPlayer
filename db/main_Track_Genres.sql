@@ -1,0 +1,9 @@
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (1, 1);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (1, 2);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (2, 1);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (2, 2);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (3, 3);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (4, 3);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (4, 6);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (5, 4);
+INSERT INTO "Track Genres" (TrackID, GenreID) VALUES (6, 5);

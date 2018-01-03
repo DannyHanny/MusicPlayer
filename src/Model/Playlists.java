@@ -3,7 +3,7 @@ package Model;
 public class Playlists {
     private int playlistId;
     private String playlistName;
-    private int id;
+
 
     public Playlists(int playlistId, String playlistName) {
         this.playlistId = playlistId;

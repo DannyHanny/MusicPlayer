@@ -1,0 +1,10 @@
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (1, 1, 'Hit and Quit it', '3:52', 320, 3, '1971');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (2, 1, 'Super Stupid', '4:01', 256, 5, '1971');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (3, 2, '░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓', '3:05', 320, 1, '2017');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (4, 3, 'Tru Dancing', '5:46', 18000, 1, '2017');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (5, 4, 'Dopesmoker', '1:03:36', 320, 1, '2003');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (6, 5, 'You Suffer', '0:01', 320, 12, '1987');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (7, 6, null, '5:02', 320, 2, '1999');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (8, 7, 'A test', '2:00', 320, null, null);
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (9, 8, 'Another test', '2:52', null, 4, '2000');
+INSERT INTO Tracks (TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (10, 9, 'Even more test', '3:02', !, 2, '2001');

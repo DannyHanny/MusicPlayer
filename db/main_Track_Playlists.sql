@@ -1,0 +1,10 @@
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (1, 1);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (2, 1);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (3, 2);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (4, 2);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (5, 3);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (6, 3);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (7, 4);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (8, 4);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (9, 4);
+INSERT INTO "Track Playlists" (TrackID, PlaylistID) VALUES (null, 5);

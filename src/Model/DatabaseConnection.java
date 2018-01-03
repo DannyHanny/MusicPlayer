@@ -29,6 +29,12 @@ public class DatabaseConnection {
 
     }
 
+    public static int getGeneratedId(PreparedStatement statement) throws SQLException {
+        ResultSet rs = statement.getGeneratedKeys();
+        rs.next();
+        return rs.getInt("last_insert_rowid()");
+    }
+
 
     public PreparedStatement newStatement(String query)
     {

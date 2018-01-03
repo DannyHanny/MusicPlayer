@@ -14,6 +14,7 @@ public class Result<T> {
     }
 
     public static Result Fail = new Result("An error occurred");
+    public static Result Success = new Result(true);
 
     public Result(T payload)
     {
@@ -25,6 +26,8 @@ public class Result<T> {
     private Result(String error) {
         this.error = error;
     }
+
+    private Result(boolean success) {this.success = success;}
 
     public boolean success() {
         return this.success;
