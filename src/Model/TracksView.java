@@ -11,15 +11,17 @@ public class TracksView {
     private final SimpleStringProperty albumName;
     private final SimpleStringProperty artistName;
     private final SimpleStringProperty length;
+    private final SimpleStringProperty fileUri;
 
     private MediaPlayer mediaPlayer;
 
-    public TracksView(int trackId, String trackName, String albumName, String artistName, String length) {
+    public TracksView(int trackId, String trackName, String albumName, String artistName, String length, String fileUri) {
         this.trackId = trackId;
         this.trackName = new SimpleStringProperty(trackName);
         this.albumName = new SimpleStringProperty(albumName);
         this.artistName = new SimpleStringProperty(artistName);
         this.length = new SimpleStringProperty(length);
+        this.fileUri = new SimpleStringProperty(fileUri);
     }
 
     public int getTrackId() {
@@ -61,6 +63,14 @@ public class TracksView {
 
     public void setLength(String length) {
         this.length.set(length);
+    }
+
+    public String getFileUri() { return fileUri.get(); }
+
+    public SimpleStringProperty fileUriProperty() { return fileUri; }
+
+    public void setFileUri(String fileUri) {
+        this.fileUri.set(fileUri);
     }
 
     public Optional<MediaPlayer> getMediaPlayer() { return Optional.ofNullable(this.mediaPlayer); }

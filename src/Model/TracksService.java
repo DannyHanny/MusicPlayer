@@ -10,7 +10,7 @@ public class TracksService {
 
     public static void selectAll(List<Tracks> targetList, DatabaseConnection database) {
 
-        PreparedStatement statement = database.newStatement("SELECT TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year FROM main.Tracks ORDER BY TrackID");
+        PreparedStatement statement = database.newStatement("SELECT TrackID, AlbumID, TrackName, Length, Bitrate, TrackListing, Year, FileUri FROM main.Tracks ORDER BY TrackID");
 
         try {
             if (statement != null) {
@@ -19,7 +19,7 @@ public class TracksService {
 
                 if (results != null) {
                     while (results.next()) {
-                        targetList.add(new Tracks(results.getInt("TrackID"), results.getInt("AlbumID"), results.getString("TrackName"), results.getString("Length"), results.getInt("Bitrate"), results.getInt("TrackListing"), results.getString("Year")));
+                        targetList.add(new Tracks(results.getInt("TrackID"), results.getInt("AlbumID"), results.getString("TrackName"), results.getString("Length"), results.getInt("Bitrate"), results.getInt("TrackListing"), results.getString("Year"), results.getString("FileUri")));
                     }
                 }
             }
@@ -30,7 +30,7 @@ public class TracksService {
 
     public static List<TracksView> selectForTable(Playlists playlist, DatabaseConnection database){
         PreparedStatement statement = database.newStatement(
-            "SELECT Tracks.TrackID As 'id', Tracks.TrackName As 'track', Albums.AlbumName As 'album', Artists.ArtistName As 'artist', Tracks.Length FROM Tracks " +
+            "SELECT Tracks.TrackID As 'id', Tracks.TrackName As 'track', Albums.AlbumName As 'album', Artists.ArtistName As 'artist', Tracks.Length, Tracks.FileUri FROM Tracks " +
                     "INNER JOIN Albums ON Albums.AlbumID = Tracks.AlbumID " +
                     "INNER JOIN Artists ON Artists.ArtistID = Albums.ArtistID " +
                     "INNER JOIN 'Track Playlists' ON 'Track Playlists'.TrackID = Tracks.TrackID " +
@@ -50,7 +50,8 @@ public class TracksService {
                                 results.getString("track"),
                                 results.getString("album"),
                                 results.getString("artist"),
-                                results.getString("length")
+                                results.getString("length"),
+                                results.getString("FileUri")
                         ));
                     }
                 }
@@ -61,7 +62,7 @@ public class TracksService {
         return tracks;
     }
 
-    public static Result<Tracks> CreateTrack(String absolutePath, String title, String albumName, String artistName, DatabaseConnection database) {
+    public static Result<Tracks> CreateTrack(String fileUri, String title, String albumName, String artistName, DatabaseConnection database) {
         try {
             Artists artist = GetArtistByName(artistName, database);
             Albums album = GetAlbumByArtistAndName(artist.getArtistId(), albumName, database);
@@ -75,7 +76,7 @@ public class TracksService {
             insert.setString(6, "2017");
             insert.execute();
             int id = DatabaseConnection.getGeneratedId(insert);
-            return new Result(new Tracks(id, album.getAlbumId(), title, "unknown", 0, 0, "2017"));
+            return new Result(new Tracks(id, album.getAlbumId(), title, "unknown", 0, 0, "2017", fileUri));
         } catch (SQLException e) {
             e.printStackTrace();
             return Result.Fail;

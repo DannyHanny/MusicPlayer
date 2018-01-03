@@ -9,8 +9,9 @@ public class Tracks {
     private int bitrate;
     private int trackListing;
     private String year;
+    private String fileUri;
 
-    public Tracks(int trackId, int albumId, java.lang.String trackName, java.lang.String length, int bitrate, int trackListing, java.lang.String year) {
+    public Tracks(int trackId, int albumId, String trackName, String length, int bitrate, int trackListing, String year, String fileUri) {
         this.trackId = trackId;
         this.albumId = albumId;
         this.trackName = trackName;
@@ -18,6 +19,7 @@ public class Tracks {
         this.bitrate = bitrate;
         this.trackListing = trackListing;
         this.year = year;
+        this.fileUri = fileUri;
     }
 
     public int getTrackId() {
@@ -75,6 +77,10 @@ public class Tracks {
     public void setYear(String year) {
         this.year = year;
     }
+
+    public String getFileUri() {return fileUri;}
+
+    public void setFileUri(String fileUri) { this.fileUri = fileUri; }
 
     @Override
     public java.lang.String toString() {

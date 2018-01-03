@@ -123,6 +123,7 @@ public class MainController {
         this.slider.setMin(0);
         this.slider.setMax(1024);
         this.slider.setValue(0);
+        //slider disabled if there is no media player
         this.slider.disableProperty().bind(this.mediaView.mediaPlayerProperty().isNull());
 
         VBox sliderBox = new VBox();
@@ -157,6 +158,7 @@ public class MainController {
         progressBar.setPrefSize(1024, 30);
         progressBar.setProgress(0);
 
+        //slide the slider, moves the media
         slider.valueProperty().addListener(
                 observable -> {
                     if (slider.isValueChanging()) {
@@ -171,7 +173,6 @@ public class MainController {
                 }
         );
 
-        //this.mediaView.mediaPlayerProperty().addListener((observable, oldValue, newValue) -> { });
         sliderBox.getChildren().addAll(this.mediaView, playControls, slider, progressBar);
         root.setTop(sliderBox);
         sliderBox.setAlignment(Pos.CENTER);
@@ -204,23 +205,28 @@ public class MainController {
         leftPane.setAlignment(Pos.TOP_CENTER);
         BorderPane.setAlignment(leftPane, Pos.CENTER_LEFT);
 
-
         VBox centrePane = new VBox();
         this.tracksTable = new TableView<>();
         tracksTable.setPrefSize(733, 1000);
         tracksTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
               if (newValue != null) {
+                  MediaPlayer mp = null;
+                  //as the track is played then update the slider
                   if (newValue.getMediaPlayer().isPresent()) {
+                      mp = newValue.getMediaPlayer().get();
+                  }else {
+                      Media media = new Media(newValue.getFileUri());
+                      mp = new MediaPlayer(media);
+                  }
+                  final MediaPlayer mediaPlayer = mp;
+                  this.mediaView.setMediaPlayer(mediaPlayer);
+                  mediaPlayer.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
+                  mediaPlayer.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
 
-                      MediaPlayer mp = newValue.getMediaPlayer().get();
-                      this.mediaView.setMediaPlayer(mp);
-                      mp.setOnPlaying(() -> this.isMediaPlayingBinding.invalidate());
-                      mp.setOnPaused(() -> this.isMediaPlayingBinding.invalidate());
-
-                      mp.currentTimeProperty().addListener(o2 -> {
+                      mediaPlayer.currentTimeProperty().addListener(o2 -> {
                           Platform.runLater(() -> {
-                              Duration currentTime = mp.getCurrentTime();
-                              Duration duration = mp.getTotalDuration();
+                              Duration currentTime = mediaPlayer.getCurrentTime();
+                              Duration duration = mediaPlayer.getTotalDuration();
                               if (!slider.isDisabled()
                                       && duration.greaterThan(Duration.ZERO)
                                       && !slider.isValueChanging()) {
@@ -232,11 +238,9 @@ public class MainController {
 
                           });
                       });
-                  } else {
-
                   }
 
-              }      });
+        });
 
         TableColumn trackColumn = new TableColumn<>("Track Title");
         trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackName"));
@@ -311,10 +315,10 @@ public class MainController {
       }
       else{
           try {
-              final Media media = new Media(file.toURI().toString());
+              String fileUri = file.toURI().toString();
+              final Media media = new Media(fileUri);
               final MediaPlayer mp = new MediaPlayer(media);
               mp.setOnReady(() -> {
-
                   if (!IsSingleAudioTrack(media)) {
                       displayError("Can only add single audio tracks");
                       return;
@@ -337,7 +341,7 @@ public class MainController {
                       return;
                   }
 
-                  TracksView trackView = new TracksView(track.getTrackId(), title, album, artist, "unknown");
+                  TracksView trackView = new TracksView(track.getTrackId(), title, album, artist, "unknown", absolutePath);
                   trackView.setMediaPlayer(mp);
                   this.tracksTable.getItems().add(trackView);
                   this.tracksTable.getSelectionModel().select(this.tracksTable.getItems().size() - 1);

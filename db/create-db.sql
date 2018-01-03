@@ -68,7 +68,8 @@ CREATE TABLE Tracks
   Length       VARCHAR,
   Bitrate      INTEGER,
   TrackListing INTEGER,
-  Year         VARCHAR
+  Year         VARCHAR,
+  FileUri      VARCHAR
 );
 
 ALTER TABLE "Track Genres"
