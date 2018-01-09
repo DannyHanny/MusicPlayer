@@ -96,14 +96,20 @@ public class MainController {
 
         Menu editMenu = new Menu("Edit");
         MenuItem editItem1 = new MenuItem("Undo");
+        editItem1.setOnAction(event -> {featureNotYetImplemented();});
         MenuItem editItem2 = new MenuItem("Redo");
+        editItem2.setOnAction(event -> {featureNotYetImplemented();});
         MenuItem editItem3 = new MenuItem("Select all");
+        editItem3.setOnAction(event -> {featureNotYetImplemented();});
         editMenu.getItems().addAll(editItem1, editItem2, editItem3);
 
         Menu shapesMenu = new Menu("View");
-        MenuItem shapesItem1 = new MenuItem("Triangle");
-        MenuItem shapesItem2 = new MenuItem("Square");
-        MenuItem shapesItem3 = new MenuItem("Circle");
+        MenuItem shapesItem1 = new MenuItem("Placeholder");
+        shapesItem1.setOnAction(event -> {featureNotYetImplemented();});
+        MenuItem shapesItem2 = new MenuItem("Placeholder");
+        shapesItem2.setOnAction(event -> {featureNotYetImplemented();});
+        MenuItem shapesItem3 = new MenuItem("Placeholder");
+        shapesItem3.setOnAction(event -> {featureNotYetImplemented();});
         shapesMenu.getItems().addAll(shapesItem1, shapesItem2, shapesItem3);
 
         Menu helpMenu = new Menu("Help");
@@ -328,7 +334,7 @@ public class MainController {
                   String title = (String) metadata.get("title");
                   String album = (String) metadata.get("album");
                   String artist = (String) metadata.get("artist");
-                  Result<Tracks> result = TracksService.CreateTrack(absolutePath, title, album, artist, database);
+                  Result<Tracks> result = TracksService.CreateTrack(fileUri, title, album, artist, database);
                   if (result.fail()) {
                       displayError("Unexpected error adding track");
                       return;

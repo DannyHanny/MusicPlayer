@@ -67,13 +67,14 @@ public class TracksService {
             Artists artist = GetArtistByName(artistName, database);
             Albums album = GetAlbumByArtistAndName(artist.getArtistId(), albumName, database);
             PreparedStatement insert = database.newStatement(
-                    "INSERT INTO Tracks (AlbumID, TrackName, Length, Bitrate, TrackListing, Year) VALUES (?, ?, ?, ?, ?, ?)");
+                    "INSERT INTO Tracks (AlbumID, TrackName, Length, Bitrate, TrackListing, Year, fileUri) VALUES (?, ?, ?, ?, ?, ?, ?)");
             insert.setInt(1,  album.getAlbumId());
             insert.setString(2, title);
             insert.setString(3, "unknown");
             insert.setInt(4, 0);
             insert.setInt(5, 0);
             insert.setString(6, "2017");
+            insert.setString(7, fileUri);
             insert.execute();
             int id = DatabaseConnection.getGeneratedId(insert);
             return new Result(new Tracks(id, album.getAlbumId(), title, "unknown", 0, 0, "2017", fileUri));

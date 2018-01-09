@@ -67,8 +67,6 @@ public class TracksView {
 
     public String getFileUri() { return fileUri.get(); }
 
-    public SimpleStringProperty fileUriProperty() { return fileUri; }
-
     public void setFileUri(String fileUri) {
         this.fileUri.set(fileUri);
     }
