@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -113,7 +114,9 @@ public class MainController {
         shapesMenu.getItems().addAll(shapesItem1, shapesItem2, shapesItem3);
 
         Menu helpMenu = new Menu("Help");
+        helpMenu.setOnAction(event ->{about();});
         MenuItem helpItem1 = new MenuItem("About");
+
         helpMenu.getItems().addAll(helpItem1);
 
         myMenu.getMenus().addAll(fileMenu, editMenu, shapesMenu, helpMenu);
@@ -297,13 +300,20 @@ public class MainController {
     }
 
     private void displayError(String errorMessage) {
-
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(errorMessage);
         alert.showAndWait();
 
+    }
+
+    private void about(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText(null);
+        alert.setContentText("Music Player created by Daniel Hannen");
+        alert.showAndWait();
     }
 
     private void featureNotYetImplemented(){
